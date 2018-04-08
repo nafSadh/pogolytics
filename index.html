@@ -1,0 +1,108 @@
+<html ng-app="ns7PoGoToolsApp">
+<head>
+	<meta charset="utf-8"/>
+	<title>Pokemon GO Tools</title>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet"
+				href="bootstrap/css/bootstrap.min.css">
+	<!-- Optional theme -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+					integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+					crossorigin="anonymous"></script>
+	<!-- angular js -->
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+	<script
+				src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-sanitize.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.js"></script>
+	<script src="./ui-bootstrap-tpls-1.3.2.min.js"></script>
+	<!-- font awesome -->
+	<link rel="stylesheet" href="fontawesome/css/font-awesome.min.css">
+	<link rel="stylesheet" href="bootstrap-print-alike.css">
+	<link rel="stylesheet" href="fonts.css">
+	<link rel="stylesheet" href="style.css">
+	<script>
+		function applyBootstrapJS() {
+			$('[data-toggle="tooltip"]').tooltip({html: true})
+			$('[data-toggle="popover"]')
+						.popover({html: true, trigger: "hover click focus", placement: 'top'})
+
+			$('.pull-down').each(function () {
+				var $this = $(this);
+				$this.css('margin-top', $this.parent().height() - $this.height())
+			});
+		}
+		var ns7PoGoToolsApp = angular.module('ns7PoGoToolsApp', ['ngSanitize', 'ui.bootstrap']);
+		ns7PoGoToolsApp.directive("ngBindHtmlCompile", function ($compile, $sce) {
+			return {
+				restrict: "A",
+				link: function (scope, element, attrs) {
+					scope.$watch(attrs.ngBindHtmlCompile, function (html) {
+						var el = angular.element("<span>").html(html);
+						element.empty();
+						element.append(el);
+						$compile(element.contents())(scope);
+						applyBootstrapJS()
+					})
+				}
+			};
+		});
+
+		ns7PoGoToolsApp.controller('ns7PoGoToolsCtrl', function ($scope, $http) {
+
+			$http.get('pogo.json')
+						.then(function (r) {
+							$scope._ = r.data;
+							$scope.model ={};
+							applyBootstrapJS()
+						});
+
+			$scope.mlt = function mlt(text) {
+				if (angular.isArray(text)) {
+					var t = '';
+					for (var i = 0; i < text.length; i++) {
+						t += text[i]
+					}
+					return t
+				} else {
+					return text
+				}
+			};
+
+			$scope.renderAddress = function (_a) {
+				if (_a != undefined) {
+					var stateTagOpen, stateTagClose;
+					if (_a.stateFull != undefined) {
+						stateTagOpen = "<abbr data-toggle='tooltip' title='" + _a.stateFull + "'>"
+						stateTagClose = "</abbr>"
+					}
+					return _a.street + "<br/>" +
+								 _a.city + ", " +
+								 stateTagOpen + _a.state + stateTagClose
+								 + " "
+								 + _a.postCode;
+				}
+			};
+
+			$scope.cp = function(p, cpm){
+				return Math.floor(0.1*(p.atk+15)*((p.def+15)**0.5)*((p.sta+15)**0.5)*cpm*cpm);
+			};
+		})
+	</script>
+</head>
+<body>
+<div ng-controller="ns7PoGoToolsCtrl" class="ns7r container">
+	<label>Pokemon</label><input ng-model="model.mon">
+	<label>Level</label><input ng-model="model.level">
+	# {{ _.pokemons[model.mon].dex }}
+	MAX CP = <span ng-if="_.pokemons[model.mon]" ng-bind='cp(_.pokemons[model.mon],_.CPM[model.level])'></span>
+
+</div>
+<script>
+	$(function () {
+		applyBootstrapJS()
+	})
+</script>
+</body>
+</html>
