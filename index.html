@@ -85,10 +85,14 @@
 				}
 			};
 
-			$scope.cp = function(p, cpm){
-				return Math.floor(0.1*(p.atk+15)*((p.def+15)**0.5)*((p.sta+15)**0.5)*cpm*cpm);
+      $scope.cp = function (p, ivs, cpm) {
+        return Math.floor(0.1 * (p.atk+ivs[0]) * ((p.def+ivs[1])**0.5) * ((p.sta+ivs[2])**0.5) * cpm*cpm);
 			};
-		})
+
+      $scope.iv2pct = function (ivSet) {
+        return Math.round(100 * (ivSet[0] + ivSet[1] + ivSet[2]) / 45);
+      }
+    })
 	</script>
 </head>
 <body>
@@ -96,7 +100,13 @@
 	<label>Pokemon</label><input ng-model="model.mon">
 	<label>Level</label><input ng-model="model.level">
 	# {{ _.pokemons[model.mon].dex }}
-	MAX CP = <span ng-if="_.pokemons[model.mon]" ng-bind='cp(_.pokemons[model.mon],_.CPM[model.level])'></span>
+	<div ng-if="_.pokemons[model.mon] && model.level">
+		MAX CP = <span ng-if="_.pokemons[model.mon]"
+									 ng-bind='cp(_.pokemons[model.mon],[15,15,15],_.CPM[model.level])'></span>
+		<div ng-repeat="ivs in _.ivSets">
+			{{ivs}} - {{iv2pct(ivs)}}% - <span ng-bind='cp(_.pokemons[model.mon],ivs,_.CPM[model.level])'></span>
+		</div>
+	</div>
 
 </div>
 <script>
