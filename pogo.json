@@ -301,7 +301,7 @@
   ],
 
   "pokemons": {
-    "Abra":{ "dex": 63, "atk":195, "def":103, "sta":50},
+    "Abra":{ "name":"Abra","dex": 63, "atk":195, "def":103, "sta":50},
     "Absol":{ "dex": 359, "atk":246, "def":120, "sta":130},
     "Aerodactyl":{ "dex": 142, "atk":221, "def":164, "sta":160},
     "Aggron":{ "dex": 306, "atk":198, "def":314, "sta":140},

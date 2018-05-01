@@ -1,89 +1,98 @@
-<html ng-app="ns7PoGoToolsApp">
+<html ng-app="pogolyticsApp">
 <head>
 	<meta charset="utf-8"/>
-	<title>Pokemon GO Tools</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<title>pogolytics</title>
+
 	<!-- Latest compiled and minified CSS -->
-	<link rel="stylesheet"
-				href="bootstrap/css/bootstrap.min.css">
-	<!-- Optional theme -->
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+				integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+
+	<!-- font awesome -->
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css"
+				integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
+
 	<!-- Latest compiled and minified JavaScript -->
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
-					integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+					integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
 					crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
+					integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+					crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
+					integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+					crossorigin="anonymous"></script>
+
 	<!-- angular js -->
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
-	<script
-				src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-sanitize.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-sanitize.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.js"></script>
-	<script src="./ui-bootstrap-tpls-1.3.2.min.js"></script>
-	<script src="./js/pogolytics.js"></script>
-	<!-- font awesome -->
-	<link rel="stylesheet" href="fontawesome/css/font-awesome.min.css">
-	<link rel="stylesheet" href="bootstrap-print-alike.css">
-	<link rel="stylesheet" href="fonts.css">
-	<link rel="stylesheet" href="style.css">
+	<script src="js/angular-filter.min.js"></script>
+
+	<!-- local styles and scripts -->
+	<link rel="stylesheet" href="css/style.css">
 	<script>
-		function applyBootstrapJS() {
-			$('[data-toggle="tooltip"]').tooltip({html: true})
-			$('[data-toggle="popover"]')
-						.popover({html: true, trigger: "hover click focus", placement: 'top'})
 
-			$('.pull-down').each(function () {
-				var $this = $(this);
-				$this.css('margin-top', $this.parent().height() - $this.height())
-			});
-		}
-		var ns7PoGoToolsApp = angular.module('ns7PoGoToolsApp', ['ngSanitize', 'ui.bootstrap']);
-		ns7PoGoToolsApp.directive("ngBindHtmlCompile", function ($compile, $sce) {
-			return {
-				restrict: "A",
-				link: function (scope, element, attrs) {
-					scope.$watch(attrs.ngBindHtmlCompile, function (html) {
-						var el = angular.element("<span>").html(html);
-						element.empty();
-						element.append(el);
-						$compile(element.contents())(scope);
-						applyBootstrapJS()
-					})
-				}
-			};
-		});
+    (function () {
 
-		ns7PoGoToolsApp.controller('ns7PoGoToolsCtrl', function ($scope, $http) {
+      const pogolyticsApp = angular.module('pogolyticsApp', ['ngSanitize', 'angular.filter']);
+      pogolyticsApp.directive("ngBindHtmlCompile", function ($compile, $sce) {
+        return {
+          restrict: "A",
+          link: function (scope, element, attrs) {
+            scope.$watch(attrs.ngBindHtmlCompile, function (html) {
+              let el = angular.element("<span>").html(html);
+              element.empty();
+              element.append(el);
+              $compile(element.contents())(scope);
+            })
+          }
+        };
+      });
+      pogolyticsApp.directive('tooltip', function () {
+        return {
+          restrict: 'A',
+          link: function (scope, element, attrs) {
+            element.tooltip();
+          }
+        };
+      });
 
-			$http.get('pogo.json')
-						.then(function (r) {
-							$scope._ = r.data;
-							$scope.model ={};
-							applyBootstrapJS()
-						});
+      pogolyticsApp.controller('pogolyticsCtrl', function ($scope, $http) {
+        $http.get('pogo.json')
+        .then(function (r) {
+          $scope._ = r.data;
+        });
+        $scope.cp = function (p, ivs, cpm) {
+          return Math.floor(0.1 * (p.atk+ivs[0]) * ((p.def+ivs[1])**0.5) * ((p.sta+ivs[2])**0.5) * cpm*cpm);
+        };
 
-			$scope.mlt = function mlt(text) {
-				if (angular.isArray(text)) {
-					var t = '';
-					for (var i = 0; i < text.length; i++) {
-						t += text[i]
-					}
-					return t
-				} else {
-					return text
-				}
-			};
+        $scope.iv2pct = function (ivSet) {
+          return Math.round(100 * (ivSet[0] + ivSet[1] + ivSet[2]) / 45);
+        }
+      });
 
-      $scope.cp = function (p, ivs, cpm) {
-        return Math.floor(0.1 * (p.atk+ivs[0]) * ((p.def+ivs[1])**0.5) * ((p.sta+ivs[2])**0.5) * cpm*cpm);
-			};
-
-      $scope.iv2pct = function (ivSet) {
-        return Math.round(100 * (ivSet[0] + ivSet[1] + ivSet[2]) / 45);
-      }
-    })
+      pogolyticsApp.filter('urlEncode', function () {
+        return window.encodeURIComponent;
+      });
+      pogolyticsApp.filter('spaceToDash',function() {
+        return function(input) {
+          if (input) {
+            return input.replace(/\s+/g, '-');
+          }
+        }
+      });
+    })();
 	</script>
 </head>
 <body>
-<div ng-controller="ns7PoGoToolsCtrl" class="ns7r container">
-	<label>Pokemon</label><input ng-model="model.mon">
+<div ng-controller="pogolyticsCtrl" class="pogolytics container">
+	<label for="Pokemon">Pokemon</label>
+	<select class="form-control" id="Pokemon" ng-model="model.mon" >
+		<option ng-repeat="(name, pokemon) in _.pokemons" value="{{name}}">
+			{{name}}
+		</option>
+	</select>
 	<label>Level</label><input ng-model="model.level">
 	# {{ _.pokemons[model.mon].dex }}
 	<div ng-if="_.pokemons[model.mon] && model.level">
@@ -97,7 +106,8 @@
 </div>
 <script>
 	$(function () {
-		applyBootstrapJS()
+    console.log('Doc Init');
+    $('[data-toggle="tooltip"]').tooltip()
 	})
 </script>
 </body>
