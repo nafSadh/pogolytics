@@ -69,6 +69,14 @@
 
         $scope.iv2pct = function (ivSet) {
           return Math.round(100 * (ivSet[0] + ivSet[1] + ivSet[2]) / 45);
+        };
+
+        $scope.getLevels = function () {
+          let levels = [];
+          for (let i = 2; i <= 80; i++) {
+						levels.push(1.0*i/2);
+          }
+          return levels;
         }
       });
 
@@ -87,12 +95,19 @@
 </head>
 <body>
 <div ng-controller="pogolyticsCtrl" class="pogolytics container">
-	<label for="Pokemon">Pokemon</label>
-	<select class="form-control" id="Pokemon" ng-model="model.mon" >
-		<option ng-repeat="(name, pokemon) in _.pokemons" value="{{name}}">
-			{{name}}
-		</option>
-	</select>
+	<h4>pogolytics</h4>
+	<h3>IV to CP chart</h3>
+	<hr/>
+	<div class="input-group">
+		<div class="input-group-prepend">
+			<span class="input-group-text" id="inputGroupPrepend">Pokémon</span>
+		</div>
+		<select class="form-control" id="Pokemon" ng-model="model.mon" >
+			<option ng-repeat="(name, pokemon) in _.pokemons" value="{{name}}">
+				{{name}}
+			</option>
+		</select>
+	</div>
 	<label>Level</label><input ng-model="model.level">
 	# {{ _.pokemons[model.mon].dex }}
 	<div ng-if="_.pokemons[model.mon] && model.level">
@@ -102,6 +117,24 @@
 			{{ivs}} - {{iv2pct(ivs)}}% - <span ng-bind='cp(_.pokemons[model.mon],ivs,_.CPM[model.level])'></span>
 		</div>
 	</div>
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th rowspan="2">Stats</th>
+				<th rowspan="2">IV %</th>
+				<th rowspan="1" colspan="4">Level</th>
+			</tr>
+			<tr>
+				<th ng-repeat="i in [1,2,3,4]">
+					<select class="form-control" ng-model="model.level[i]" >
+						<option ng-repeat="level in getLevels() " value="{{level}}">
+							{{level}}
+						</option>
+					</select>
+				</th>
+			</tr>
+		</thead>
+	</table>
 
 </div>
 <script>
