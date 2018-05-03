@@ -686,8 +686,7 @@
     "Zangoose":{ "dex": 335, "atk":222, "def":124, "sta":146},
     "Zapdos":{ "dex": 145, "atk":253, "def":188, "sta":180},
     "Zigzagoon":{ "dex": 263, "atk":58, "def":80, "sta":76},
-    "Zubat":{ "dex": 41, "atk":83, "def":76, "sta":80
-    }
+    "Zubat":{ "dex": 41, "atk":83, "def":76, "sta":80 }
   }
 
 }

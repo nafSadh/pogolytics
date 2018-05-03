@@ -128,13 +128,18 @@
 				{{name}}
 			</option>
 		</select>
-	</div>
-	<div>
 		<input-dropdown
+				class="input-group-append"
 				selected-item="model.mon"
 				default-dropdown-items="_.pokemonNamesList"
-				filter-list-method="filterStringList(userInput)">
+				filter-list-method="filterStringList(userInput)"
+				input-class-name="form-control rounded-0"
+				input-placeholder="type name">
 		</input-dropdown>
+	</div>
+	<hr/>
+	<div>
+
 	</div>
 
 
