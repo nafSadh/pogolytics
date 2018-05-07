@@ -99,7 +99,13 @@
           return filter.promise;
         };
 
+        $scope.nums = function (num) {
+          return Array.apply(null, Array(num)).map(function (_, i) {return i;});
+        };
+				$scope.cnt = 4;
+				$scope.model = {levels:[15.0,20.0,25,40,35,30]};
       });
+
 
       pogolyticsApp.filter('urlEncode', function () {
         return window.encodeURIComponent;
@@ -138,38 +144,30 @@
 		</input-dropdown>
 	</div>
 	<hr/>
-	<div>
-
-	</div>
-
-
-
-	<label>Level</label><input ng-model="model.level">
-	# {{ _.pokemons[model.mon].dex }}
-	<div ng-if="_.pokemons[model.mon] && model.level">
-		MAX CP = <span ng-if="_.pokemons[model.mon]"
-									 ng-bind='cp(_.pokemons[model.mon],[15,15,15],_.CPM[model.level])'></span>
-		<div ng-repeat="ivs in _.ivSets">
-			{{ivs}} - {{iv2pct(ivs)}}% - <span ng-bind='cp(_.pokemons[model.mon],ivs,_.CPM[model.level])'></span>
-		</div>
-	</div>
+	<input class="form-control" type="number" ng-model="cnt" />
 	<table class="table table-striped">
 		<thead>
 			<tr>
 				<th rowspan="2">Stats</th>
 				<th rowspan="2">IV %</th>
-				<th rowspan="1" colspan="4">Level</th>
+				<th rowspan="1" colspan="{{cnt}}">
+					Level
+				</th>
 			</tr>
 			<tr>
-				<th ng-repeat="i in [1,2,3,4]">
-					<select class="form-control" ng-model="model.level[i]" >
-						<option ng-repeat="level in getLevels() " value="{{level}}">
-							{{level}}
-						</option>
-					</select>
+				<th ng-repeat="i in nums(cnt) track by $index">
+					<input type="number" step="0.5" min="1" max="40" class="form-control" ng-model="model.levels[i]">
 				</th>
 			</tr>
 		</thead>
+		<tbody>
+			<tr ng-repeat="iv in _.ivSets" ng-if="model.mon">
+				<td class="stats">{{iv[0]}}/{{iv[1]}}/{{iv[2]}}</td>
+				<td class="stats">{{iv2pct(iv)}}</td>
+				<td class="cp" ng-repeat="i in nums(cnt) track by $index"
+						ng-bind-html-compile='cp(_.pokemons[model.mon],iv,_.CPM[model.levels[i]])'> </td>
+			</tr>
+		</tbody>
 	</table>
 
 </div>
