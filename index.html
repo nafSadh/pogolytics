@@ -102,7 +102,7 @@
         $scope.nums = function (num) {
           return Array.apply(null, Array(num)).map(function (_, i) {return i;});
         };
-				$scope.cnt = 4;
+				$scope.cnt = 3;
 				$scope.model = {levels:[15.0,20.0,25,40,35,30]};
       });
 
@@ -144,14 +144,16 @@
 		</input-dropdown>
 	</div>
 	<hr/>
-	<input class="form-control" type="number" ng-model="cnt" />
-	<table class="table table-striped">
+	<button class="btn" ng-click="showIv2Cp=!showIv2Cp">Show IV to CP</button>
+	<button class="btn" ng-click="showIvLevelDist=!showIvLevelDist">Show IV-Level Dist</button>
+	<table class="table table-striped" ng-if="showIv2Cp">
 		<thead>
 			<tr>
 				<th rowspan="2">Stats</th>
 				<th rowspan="2">IV %</th>
 				<th rowspan="1" colspan="{{cnt}}">
-					Level
+					<label>Level</label>
+					<input class="form-control" type="number" ng-model="cnt" />
 				</th>
 			</tr>
 			<tr>
@@ -166,6 +168,32 @@
 				<td class="stats">{{iv2pct(iv)}}</td>
 				<td class="cp" ng-repeat="i in nums(cnt) track by $index"
 						ng-bind-html-compile='cp(_.pokemons[model.mon],iv,_.CPM[model.levels[i]])'> </td>
+			</tr>
+		</tbody>
+	</table>
+	<table class="table table-striped" ng-if="showIvLevelDist">
+		<thead>
+			<tr>
+				<th rowspan="3">Level</th>
+				<th rowspan="1" colspan="10">IV %</th>
+			</tr>
+			<tr>
+				<th ng-repeat="i in nums(20) track by $index">
+					{{iv2pct(_.ivSets[i])}}
+				</th>
+			</tr>
+			<tr>
+				<th ng-repeat="i in nums(20) track by $index" style="font-weight: lighter">
+					<small style="font-size: 8pt">{{_.ivSets[i][0]}}<br/>{{_.ivSets[i][1]}} {{_.ivSets[i][2]}}</small>
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="lvl in nums(31)" ng-if="model.mon">
+				<td class="level">{{35-(lvl/2)}}</td>
+				<!-- cp(_.pokemons[model.mon],_.ivSets[i],_.CPM[40-(lvl/2)]) -->
+				<td class="cp" ng-repeat="i in nums(20) track by $index"
+						ng-bind-html-compile='cp(_.pokemons[model.mon],_.ivSets[i],_.CPM[35-(lvl/2)])'> </td>
 			</tr>
 		</tbody>
 	</table>
