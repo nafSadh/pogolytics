@@ -392,6 +392,7 @@
     "Espeon":{ "dex": 196, "atk":261, "def":194, "sta":130},
     "Exeggcute":{ "dex": 102, "atk":107, "def":140, "sta":120},
     "Exeggutor":{ "dex": 103, "atk":233, "def":158, "sta":190},
+    "Exeggutor-Alolan":{ "dex": 103, "atk":230, "def":158, "sta":190},
     "Exploud":{ "dex": 295, "atk":179, "def":142, "sta":208},
     "Farfetch'd":{ "dex": 83, "atk":124, "def":118, "sta":104},
     "Fearow":{ "dex": 22, "atk":182, "def":135, "sta":130},
