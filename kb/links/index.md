@@ -1,1 +1,1 @@
-Go here: [Useful Links](./kb/links)
+Go here: [Useful Links](https://nafsadh.github.io/pogolytics/kb/links)
