@@ -1,1 +1,1 @@
-[Useful Links](kb/links)
+Go here: [Useful Links](./kb/links)
