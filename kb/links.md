@@ -12,7 +12,7 @@ IV Calculators
 
 Analysis
 --------
-1. [pogolytics/IV⇄CP](https://nafsadh.github.io/pogolytics/)
+1. [pogolytics/IV⇄CP](https://nafsadh.github.io/pogolytics/ivcp)
 2. Google Worksheet [view only](https://goo.gl/L5QDUT), [make copy](https://goo.gl/vsGhEV)
 3. [GP Break Point Calculator](https://pokemongo.gamepress.gg/breakpoint-calculator#/)
 
