@@ -1,0 +1,276 @@
+<html ng-app="pogolyticsApp">
+<head>
+	<meta charset="utf-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<title>pogolytics</title>
+
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+				integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+
+	<!-- font awesome -->
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css"
+				integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+					integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+					crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
+					integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+					crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
+					integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+					crossorigin="anonymous"></script>
+
+	<!-- angular js -->
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-sanitize.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.js"></script>
+	<script src="js/angular-filter.min.js"></script>
+	<script src="js/inputDropdown.js"></script>
+
+	<!-- local styles and scripts -->
+	<link rel="stylesheet" href="css/inputDropdownStyles.css">
+	<link rel="stylesheet" href="css/style.css">
+	<script>
+
+    (function () {
+
+      const pogolyticsApp = angular.module('pogolyticsApp', ['ngSanitize', 'angular.filter', 'inputDropdown']);
+      pogolyticsApp.directive("ngBindHtmlCompile", function ($compile, $sce) {
+        return {
+          restrict: "A",
+          link: function (scope, element, attrs) {
+            scope.$watch(attrs.ngBindHtmlCompile, function (html) {
+              let el = angular.element("<span>").html(html);
+              element.empty();
+              element.append(el);
+              $compile(element.contents())(scope);
+            })
+          }
+        };
+      });
+      pogolyticsApp.directive('tooltip', function () {
+        return {
+          restrict: 'A',
+          link: function (scope, element, attrs) {
+            element.tooltip();
+          }
+        };
+      });
+
+      pogolyticsApp.controller('pogolyticsCtrl', function ($scope, $http, $q) {
+        $http.get('pogo.json')
+        .then(function (r) {
+          var _ = $scope._ = r.data;
+          _.pokemonNamesList = [];
+          _.p = _.pokemons;
+					for(let name in $scope._.p){
+            _.pokemonNamesList.push(name);
+					}
+        });
+
+
+        $scope.cp = function (p, ivs, cpm) {
+          return Math.floor(0.1 * (p.atk+ivs[0]) * ((p.def+ivs[1])**0.5) * ((p.sta+ivs[2])**0.5) * cpm*cpm);
+        };
+
+        $scope.iv2pct = function (ivSet) {
+          return Math.round(100 * (ivSet[0] + ivSet[1] + ivSet[2]) / 45);
+        };
+
+        $scope.getLevels = function () {
+          let levels = [];
+          for (let i = 2; i <= 80; i++) {
+						levels.push(1.0*i/2);
+          }
+          return levels;
+        };
+
+        $scope.filterStringList = function(userInput) {
+          var filter = $q.defer();
+          var normalisedInput = userInput.toLowerCase();
+
+          var filteredArray = $scope._.pokemonNamesList.filter(function(str) {
+            return str.toLowerCase().indexOf(normalisedInput) !== -1;
+          });
+
+          filter.resolve(filteredArray);
+          return filter.promise;
+        };
+
+        $scope.rRange = function (low, high, step) {
+          let xr = [];
+          for (let n = high; n >= low; n -= step) {
+            xr.push(n);
+          }
+          console.log(xr);
+          return xr;
+        };
+        $scope.nums = function (num) {
+          return Array.apply(null, Array(num)).map(function (_, i) {return i;});
+        };
+
+        $scope.toggle = function(target){
+          if(!target){
+            $scope.showIv2Cp = false;
+            $scope.showIvLevelDist = false;
+					}
+					return !target;
+				};
+
+				$scope.cnt = 3;
+        $scope.showIv2Cp = true;
+        $scope.level = {low: 15, high: 35, stepSz: 1};
+				$scope.m = {levels:[15.0,20.0,25,40,35,30]};
+      });
+
+
+      pogolyticsApp.filter('urlEncode', function () {
+        return window.encodeURIComponent;
+      });
+      pogolyticsApp.filter('spaceToDash',function() {
+        return function(input) {
+          if (input) {
+            return input.replace(/\s+/g, '-');
+          }
+        }
+      });
+    })();
+	</script>
+</head>
+<body>
+<div ng-controller="pogolyticsCtrl" class="pogolytics container">
+	<h2 class="mt-3 mb-3">
+		pogolytics<sup>IV⇄CP</sup><span ng-if="m.mon">({{m.mon}})</span>
+	</h2>
+	<div class="input-group">
+		<div class="input-group-prepend">
+			<span class="input-group-text" id="inputGroupPrepend">Pokémon</span>
+		</div>
+		<select class="form-control" id="Pokemon" ng-model="m.mon" >
+			<option ng-repeat="(name, pokemon) in _.p" value="{{name}}">
+				{{name}}
+			</option>
+		</select>
+		<input-dropdown
+				class="input-group-append"
+				selected-item="m.mon"
+				default-dropdown-items="_.pokemonNamesList"
+				filter-list-method="filterStringList(userInput)"
+				input-class-name="form-control rounded-0"
+				input-placeholder="type name">
+		</input-dropdown>
+	</div>
+	<div class="row mt-3 mb-3">
+		<div class="col-md-6 btn-group" role="group">
+			<button class="btn" ng-class="showIv2Cp ? 'btn-primary':'btn-secondary'"
+							ng-click="showIv2Cp=toggle(showIv2Cp)">
+				<span class="badge badge-dark">{{showIv2Cp ? 'Hide':'Show'}}</span> IV to CP</button>
+			<button class="btn" ng-class="showIvLevelDist ? 'btn-primary':'btn-secondary'"
+							ng-click="showIvLevelDist=toggle(showIvLevelDist)">
+				<span class="badge badge-dark">{{showIvLevelDist? 'Hide':'Show'}}</span> IV-Level Dist
+			</button>
+		</div>
+		<div class="col-md-6">
+			<div class="btn-group float-right " role="group">
+				<button type="button" class="btn btn-light">
+					# <span class="badge badge-light">{{_.p[m.mon].dex}} {{m.mom}}</span>
+				</button>
+				<button type="button" class="btn btn-warning">
+					⚔ Atk <span class="badge badge-light">{{_.p[m.mon].atk}}</span>
+				</button>
+				<button type="button" class="btn btn-success">
+					🛡	 Def <span class="badge badge-light">{{_.p[m.mon].def}}</span>
+				</button>
+				<button type="button" class="btn btn-dark">
+					💓 Sta <span class="badge badge-light">{{_.p[m.mon].sta}}</span>
+				</button>
+			</div>
+		</div>
+	</div>
+	<table class="table table-striped" ng-if="showIv2Cp">
+		<thead>
+			<tr>
+				<th rowspan="2">Stats</th>
+				<th rowspan="2">IV %</th>
+				<th rowspan="1" colspan="{{cnt}}">
+					<div class="input-group mb-0">
+						<div class="input-group-prepend">
+							<span class="input-group-text" id="basic-addon1"><sup>Pokemon</sup>Level<sub>columns</sub></span>
+						</div>
+						<input class="form-control" type="number" ng-model="cnt"/>
+					</div>
+					<label></label>
+				</th>
+			</tr>
+			<tr>
+				<th ng-repeat="i in nums(cnt) track by $index">
+					<input type="number" step="0.5" min="1" max="40" class="form-control" ng-model="m.levels[i]">
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr ng-repeat="iv in _.ivSets" ng-if="m.mon">
+				<td class="stats">{{iv[0]}}/{{iv[1]}}/{{iv[2]}}</td>
+				<td class="stats">{{iv2pct(iv)}}</td>
+				<td class="cp" ng-repeat="i in nums(cnt) track by $index"
+						ng-bind-html-compile='cp(_.p[m.mon],iv,_.CPM[m.levels[i]])'> </td>
+			</tr>
+		</tbody>
+	</table>
+	<table class="table table-striped" ng-if="showIvLevelDist">
+		<thead>
+		<tr>
+			<div class="input-group input-group-sm" ng-if="showIvLevelDist">
+				<div class="input-group-prepend">
+					<span class="input-group-text">Levels</span>
+				</div>
+				<input type="number" min="1" max="40" step="{{level.stepSz" class="form-control" ng-model="level.low"/>
+				<div class="input-group-prepend">
+					<span class="input-group-text">to</span>
+				</div>
+				<input type="number" min="{{level.low}}" max="40" step="{{level.stepSz}}" class="form-control"
+							 ng-model="level.high"/>
+				<div class="input-group-prepend">
+					<span class="input-group-text">Step Size</span>
+				</div>
+				<input type="number" min="0.5" max="1" step=".5" class="form-control" ng-model="level.stepSz"/>
+			</div>
+		</tr>
+		<tr>
+			<th rowspan="3">
+				Levels
+			</th>
+			<th rowspan="1" colspan="20">IV %</th>
+			</tr>
+			<tr>
+				<th ng-repeat="i in nums(20) track by $index">
+					{{iv2pct(_.ivSets[i])}}
+				</th>
+			</tr>
+			<tr>
+				<th ng-repeat="i in nums(20) track by $index" style="font-weight: lighter">
+					<small style="font-size: 8pt">{{_.ivSets[i][0]}}<br/>{{_.ivSets[i][1]}} {{_.ivSets[i][2]}}</small>
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+		<tr ng-repeat="lvl in rRange(level.low,level.high,level.stepSz)" ng-if="m.mon">
+			<td class="level">{{lvl}}</td>
+				<td class="cp" ng-repeat="i in nums(20) track by $index"
+						ng-bind-html-compile='cp(_.p[m.mon],_.ivSets[i],_.CPM[lvl])'></td>
+			</tr>
+		</tbody>
+	</table>
+
+</div>
+<script>
+	$(function () {
+    console.log('Doc Init');
+    $('[data-toggle="tooltip"]').tooltip()
+	})
+</script>
+</body>
+</html>
