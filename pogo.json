@@ -579,6 +579,7 @@
     "Rapidash":{ "dex": 78, "atk":207, "def":167, "sta":130},
     "Raticate":{ "dex": 20, "atk":161, "def":144, "sta":110},
     "Rattata":{ "dex": 19, "atk":103, "def":70, "sta":60},
+    "Rattata-Alolan":{ "dex": 19, "atk":103, "def":70, "sta":60},
     "Rayquaza":{ "dex": 384, "atk":284, "def":170, "sta":191},
     "Regice":{ "dex": 378, "atk":179, "def":356, "sta":160},
     "Regirock":{ "dex": 377, "atk":179, "def":356, "sta":160},
