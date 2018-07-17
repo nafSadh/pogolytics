@@ -10,12 +10,18 @@ IV Calculators
 
 
 
-Analysis
---------
+Analysis tools
+--------------
 1. [pogolytics/IV⇄CP](https://nafsadh.github.io/pogolytics/ivcp)
 2. Google Worksheet [view only](https://goo.gl/L5QDUT), [make copy](https://goo.gl/vsGhEV)
 3. [GP Break Point Calculator](https://pokemongo.gamepress.gg/breakpoint-calculator#/)
 
+
+Published Research
+------------------
+
+1. [The EX raid compendium: everything we've learned](https://www.reddit.com/r/TheSilphRoad/comments/8zbd0y/the_ex_raid_compendium_everything_weve_learned/)
+2. [Gen 4 Meta Speculation](https://www.reddit.com/r/TheSilphRoad/comments/8ykagf/list_of_gen4_metarelevant_attackers_by_type/)
 
 
 **Pull requests are very welcome and well appreciated**
