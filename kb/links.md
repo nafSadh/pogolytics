@@ -8,7 +8,9 @@ IV Calculators
 2. [Poke Genie](https://play.google.com/store/apps/details?id=com.cjin.pokegenie.standard&hl=en_US) -- easy to use, great UI
 3. [Go IV](https://play.google.com/store/apps/details?id=org.opensource.goiv) is [opensource](https://github.com/farkam135/GoIV) -- best for filtering your Pokemons quickly
 
-
+Info source
+-----------
+1. [Map of stops and gyms](https://www.pokemongomap.info/) -- legacy data, now community sourced; so many new stops and gyms might not be yet be in their database. 
 
 Analysis tools
 --------------
